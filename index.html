@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Basil Jijo — Portfolio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <img src="assets/hero.jpg" alt="Basil Jijo" class="hero-photo">
+      <div class="hero-text">
+        <h1>Basil <span>Jijo</span></h1>
+        <p class="role">Unity Game Developer &amp; Designer</p>
+        <p class="lead">Unity Game Developer specializing in gameplay mechanics and level design. I build small but polished experiences that focus on feel and player engagement.</p>
+        <div class="buttons">
+          <a class="btn primary" href="#projects">View My Work</a>
+          <a class="btn" href="assets/Basil_Jijo_CV.pdf" download>Download CV</a>
+          <a class="btn" href="#contact">Get in Touch</a>
+          <a class="btn outline" href="https://github.com/basildevs" target="_blank">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="projects">
+      <h2>My Games &amp; Projects</h2>
+      <div class="grid">
+        <!-- Project 1 -->
+        <article class="card">
+          <img src="assets/game1.jpg" alt="Gravity Flip screenshot">
+          <h3>Gravity Flip</h3>
+          <p>2D platformer with gravity-switch mechanics and precision-based movement.</p>
+          <div class="card-actions">
+            <a class="btn primary" href="#" target="_blank">Download (itch.io)</a>
+            <a class="btn outline" href="https://github.com/basildevs/gravity-flip" target="_blank">View on GitHub</a>
+          </div>
+        </article>
+        <!-- Project 2 -->
+        <article class="card">
+          <img src="assets/game2.jpg" alt="Zombie Shooter screenshot">
+          <h3>Zombie Shooter</h3>
+          <p>Wave-based survival shooter featuring enemy AI and responsive controls.</p>
+          <div class="card-actions">
+            <a class="btn primary" href="#" target="_blank">Download (itch.io)</a>
+            <a class="btn outline" href="https://github.com/basildevs/zombie-shooter" target="_blank">View on GitHub</a>
+          </div>
+        </article>
+        <!-- 3-5 placeholders -->
+        <article class="card"><img src="assets/game3.jpg"><h3>Project Three</h3><p>Replace with description.</p><div class="card-actions"><a class="btn primary" href="#">Download</a><a class="btn outline" href="#">View on GitHub</a></div></article>
+        <article class="card"><img src="assets/game4.jpg"><h3>Project Four</h3><p>Replace with description.</p><div class="card-actions"><a class="btn primary" href="#">Download</a><a class="btn outline" href="#">View on GitHub</a></div></article>
+        <article class="card"><img src="assets/game5.jpg"><h3>Project Five</h3><p>Replace with description.</p><div class="card-actions"><a class="btn primary" href="#">Download</a><a class="btn outline" href="#">View on GitHub</a></div></article>
+      </div>
+    </section>
+
+    <section id="contact" class="contact">
+      <h2>Get in Touch</h2>
+      <div class="contact-grid">
+        <div class="left">
+          <p><strong>Phone:</strong> +91 93801 48460<br><strong>Email:</strong> <a href="mailto:basiljijo121@gmail.com">basiljijo121@gmail.com</a></p>
+          <p><a class="btn outline" href="https://github.com/basildevs" target="_blank">GitHub</a></p>
+        </div>
+        <div class="right">
+          <form action="mailto:basiljijo121@gmail.com" method="POST" enctype="text/plain">
+            <label>Name</label><input name="name" placeholder="Your name">
+            <label>Email</label><input name="email" placeholder="Your email">
+            <label>Message</label><textarea name="message" placeholder="Your message"></textarea>
+            <button class="btn primary" type="submit">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">© Basil Jijo — Unity Game Developer &amp; Designer</footer>
+  <script src="script.js"></script>
+</body>
+</html>
