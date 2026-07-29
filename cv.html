@@ -40,7 +40,7 @@
             --white:   #ffffff;
         }
 
-        html { font-size: 10pt; }
+        html { font-size: 9.5pt; }
 
         body {
             background: #000;
@@ -83,14 +83,13 @@
             width: 68mm;
             background: #020408;
             border-right: 1px solid rgba(0,240,255,0.12);
-            padding: 10mm 6mm 10mm 6mm;
+            padding: 9mm 5.5mm;
             display: flex;
             flex-direction: column;
-            gap: 7mm;
+            gap: 5mm;
             position: relative;
         }
 
-        /* diagonal accent */
         .sidebar::after {
             content: '';
             position: absolute;
@@ -105,8 +104,8 @@
         .avatar-block { text-align: center; }
 
         .avatar-ring {
-            width: 38mm; height: 38mm;
-            margin: 0 auto 3mm;
+            width: 34mm; height: 34mm;
+            margin: 0 auto 2.5mm;
             border-radius: 50%;
             padding: 2px;
             background: conic-gradient(var(--cyan), var(--purple), var(--pink), var(--cyan));
@@ -123,7 +122,7 @@
 
         .avatar-name {
             font-family: 'Orbitron', sans-serif;
-            font-size: 9pt;
+            font-size: 10pt;
             font-weight: 900;
             color: var(--white);
             letter-spacing: 2px;
@@ -141,8 +140,6 @@
         /* ============================
            SIDEBAR SECTION
            ============================ */
-        .sb-section { }
-
         .sb-title {
             font-family: 'Orbitron', sans-serif;
             font-size: 6pt;
@@ -152,45 +149,42 @@
             text-transform: uppercase;
             padding-bottom: 1.5mm;
             border-bottom: 1px solid rgba(0,240,255,0.2);
-            margin-bottom: 3mm;
+            margin-bottom: 2.5mm;
         }
 
         /* Contact */
         .contact-list { list-style: none; display: flex; flex-direction: column; gap: 2mm; }
 
         .contact-list li {
-            font-size: 7pt;
+            font-size: 6.8pt;
             color: var(--text);
             display: flex;
             align-items: flex-start;
             gap: 2mm;
         }
 
-        .contact-list .icon { color: var(--cyan); min-width: 3mm; font-size: 8pt; }
-
+        .contact-list .icon { color: var(--cyan); min-width: 3mm; font-size: 7.5pt; }
         .contact-list a { color: var(--cyan); text-decoration: none; word-break: break-all; }
 
         /* Skills */
-        .skill-item { margin-bottom: 2.5mm; }
+        .skill-item { margin-bottom: 2mm; }
 
         .skill-label {
             display: flex; justify-content: space-between;
-            font-size: 7pt; color: var(--text); margin-bottom: 1mm;
+            font-size: 6.8pt; color: var(--text); margin-bottom: 0.8mm;
             font-weight: 600;
         }
 
-        .skill-pct { color: var(--cyan); font-family: 'Fira Code', monospace; font-size: 6.5pt; }
+        .skill-pct { color: var(--cyan); font-family: 'Fira Code', monospace; font-size: 6pt; }
 
         .skill-bar {
             height: 3px;
             background: rgba(255,255,255,0.06);
-            border-radius: 0;
             position: relative;
         }
 
         .skill-fill {
             height: 100%;
-            border-radius: 0;
             background: linear-gradient(90deg, var(--purple), var(--cyan));
             position: relative;
         }
@@ -204,14 +198,14 @@
         }
 
         /* Tags */
-        .tag-cloud { display: flex; flex-wrap: wrap; gap: 1.5mm; }
+        .tag-cloud { display: flex; flex-wrap: wrap; gap: 1.2mm; }
 
         .tag {
             background: rgba(0,240,255,0.06);
             border: 1px solid rgba(0,240,255,0.2);
             color: var(--text);
-            font-size: 6.5pt;
-            padding: 1mm 2mm;
+            font-size: 6.2pt;
+            padding: 0.8mm 1.8mm;
             border-radius: 2px;
         }
 
@@ -220,29 +214,24 @@
            ============================ */
         .main {
             flex: 1;
-            padding: 10mm 8mm 10mm 8mm;
+            padding: 9mm 7.5mm;
             display: flex;
             flex-direction: column;
-            gap: 6mm;
+            gap: 4.5mm;
         }
-
-        /* ============================
-           MAIN SECTION
-           ============================ */
-        .section { }
 
         .section-header {
             display: flex;
             align-items: center;
             gap: 2mm;
-            margin-bottom: 3.5mm;
+            margin-bottom: 2.5mm;
         }
 
         .section-line { flex: 1; height: 1px; background: linear-gradient(to right, rgba(0,240,255,0.3), transparent); }
 
         .section-label {
             font-family: 'Orbitron', sans-serif;
-            font-size: 7pt;
+            font-size: 6.8pt;
             font-weight: 700;
             color: var(--cyan);
             letter-spacing: 2px;
@@ -252,9 +241,9 @@
 
         /* ABOUT */
         .about-text {
-            font-size: 8pt;
+            font-size: 7.8pt;
             color: var(--text);
-            line-height: 1.6;
+            line-height: 1.55;
             border-left: 2px solid var(--cyan);
             padding-left: 3mm;
             background: rgba(0,240,255,0.02);
@@ -264,8 +253,8 @@
         .project-card {
             background: rgba(0,240,255,0.03);
             border: 1px solid rgba(0,240,255,0.12);
-            padding: 3mm 3.5mm;
-            margin-bottom: 2.5mm;
+            padding: 2.8mm 3.2mm;
+            margin-bottom: 2mm;
             position: relative;
         }
 
@@ -281,12 +270,12 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 1mm;
+            margin-bottom: 0.8mm;
         }
 
         .project-name {
             font-family: 'Rajdhani', sans-serif;
-            font-size: 9pt;
+            font-size: 8.8pt;
             font-weight: 700;
             color: var(--white);
             letter-spacing: 0.5px;
@@ -294,83 +283,51 @@
 
         .project-badge {
             font-family: 'Orbitron', sans-serif;
-            font-size: 5.5pt;
+            font-size: 5.2pt;
             font-weight: 700;
             color: #000;
             background: linear-gradient(90deg, var(--cyan), var(--purple));
-            padding: 0.5mm 2mm;
+            padding: 0.4mm 1.8mm;
             border-radius: 1px;
             letter-spacing: 1px;
         }
 
-        .project-meta {
-            font-size: 6.5pt;
-            color: var(--cyan);
-            font-family: 'Fira Code', monospace;
-            margin-bottom: 1.5mm;
-        }
-
-        .project-desc {
-            font-size: 7.5pt;
+        .project-bullet {
+            font-size: 7.2pt;
             color: var(--text);
-            line-height: 1.5;
-            margin-bottom: 1.5mm;
+            line-height: 1.45;
+            padding-left: 2.5mm;
+            position: relative;
+            margin-bottom: 0.8mm;
         }
-
-        .project-pills { display: flex; flex-wrap: wrap; gap: 1mm; }
-
-        .pill {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--muted);
-            font-size: 6pt;
-            padding: 0.5mm 1.5mm;
-            font-family: 'Fira Code', monospace;
-        }
-
-        .project-link {
-            font-size: 6.5pt;
-            color: var(--purple);
-            font-family: 'Fira Code', monospace;
-            margin-top: 1.5mm;
-            display: block;
+        .project-bullet::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--cyan);
         }
 
         /* EDUCATION */
-        .edu-item { margin-bottom: 2.5mm; }
+        .edu-item { margin-bottom: 2.2mm; }
         .edu-name {
             font-family: 'Rajdhani', sans-serif;
-            font-size: 9pt;
+            font-size: 8.5pt;
             font-weight: 700;
             color: var(--white);
         }
-        .edu-sub { font-size: 7.5pt; color: var(--cyan); margin-bottom: 0.5mm; }
-        .edu-desc { font-size: 7pt; color: var(--muted); }
+        .edu-sub { font-size: 7.2pt; color: var(--cyan); margin-bottom: 0.4mm; }
 
-        /* PHILOSOPHY */
-        .philosophy-box {
-            background: rgba(157,78,221,0.05);
-            border: 1px solid rgba(157,78,221,0.25);
-            padding: 3mm;
-            font-size: 7.5pt;
-            color: var(--text);
-            line-height: 1.6;
-            font-style: italic;
-            position: relative;
-        }
-        .philosophy-box::before {
-            content: '"';
-            position: absolute;
-            top: -2mm; left: 2mm;
-            font-size: 20pt;
-            color: var(--purple);
-            font-family: serif;
-            line-height: 1;
+        /* DECLARATION */
+        .declaration-box {
+            background: rgba(157,78,221,0.04);
+            border: 1px solid rgba(157,78,221,0.2);
+            padding: 2.5mm 3mm;
+            font-size: 7pt;
+            color: var(--muted);
+            line-height: 1.5;
         }
 
-        /* ============================
-           PRINT BUTTON (no-print)
-           ============================ */
+        /* PRINT BUTTON */
         .print-btn-wrapper {
             position: fixed;
             bottom: 20px; right: 20px;
@@ -394,9 +351,6 @@
 
         .print-btn:hover { box-shadow: 0 0 35px rgba(0,240,255,0.9); transform: translateY(-2px); }
 
-        /* ============================
-           SCREEN PREVIEW WRAPPER
-           ============================ */
         @media screen {
             body { padding: 20px; background: #000; }
             .page {
@@ -408,22 +362,15 @@
 </head>
 <body>
 
-    <!-- ============================
-         PRINT / DOWNLOAD BUTTON
-         ============================ -->
+    <!-- PRINT / DOWNLOAD BUTTON -->
     <div class="print-btn-wrapper no-print">
         <button class="print-btn" onclick="window.print()">⬇ DOWNLOAD PDF</button>
     </div>
 
-    <!-- ============================
-         PAGE
-         ============================ -->
     <div class="page">
         <div class="layout">
 
-            <!-- ============================
-                 SIDEBAR
-                 ============================ -->
+            <!-- SIDEBAR -->
             <aside class="sidebar">
 
                 <!-- Avatar -->
@@ -432,185 +379,138 @@
                         <img src="./assets/developer_avatar.jpg" alt="Basil Jijo">
                     </div>
                     <div class="avatar-name">BASIL JIJO</div>
-                    <div class="avatar-role">Unity Game Developer</div>
+                    <div class="avatar-role">Unity Game Developer | Game Design & Level Design</div>
                 </div>
 
                 <!-- Contact -->
                 <div class="sb-section">
-                    <div class="sb-title">// CONTACT</div>
+                    <div class="sb-title">// CONTACT INFO</div>
                     <ul class="contact-list">
                         <li>
-                            <span class="icon">▸</span>
+                            <span class="icon">✉</span>
                             <div>
-                                <div style="color:var(--muted);font-size:6pt;font-family:'Fira Code',monospace;">ITCH.IO</div>
+                                <div style="color:var(--muted);font-size:5.5pt;font-family:'Fira Code',monospace;">EMAIL</div>
+                                <a href="mailto:basiljijo121@gmail.com">basiljijo121@gmail.com</a>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="icon">☎</span>
+                            <div>
+                                <div style="color:var(--muted);font-size:5.5pt;font-family:'Fira Code',monospace;">PHONE</div>
+                                <a href="tel:+919380148460">+91 9380148460</a>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="icon">📍</span>
+                            <div>
+                                <div style="color:var(--muted);font-size:5.5pt;font-family:'Fira Code',monospace;">LOCATION</div>
+                                <span>Ernakulam, Kerala, India</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="icon">🎮</span>
+                            <div>
+                                <div style="color:var(--muted);font-size:5.5pt;font-family:'Fira Code',monospace;">ITCH.IO</div>
                                 <a href="https://itch.io/profile/basil-devs">itch.io/basil-devs</a>
                             </div>
                         </li>
                         <li>
-                            <span class="icon">▸</span>
+                            <span class="icon">💻</span>
                             <div>
-                                <div style="color:var(--muted);font-size:6pt;font-family:'Fira Code',monospace;">GITHUB</div>
+                                <div style="color:var(--muted);font-size:5.5pt;font-family:'Fira Code',monospace;">GITHUB</div>
                                 <a href="https://github.com/basildevs">github.com/basildevs</a>
                             </div>
                         </li>
                         <li>
-                            <span class="icon">▸</span>
+                            <span class="icon">🌐</span>
                             <div>
-                                <div style="color:var(--muted);font-size:6pt;font-family:'Fira Code',monospace;">PORTFOLIO</div>
-                                <a href="https://basildevs.github.io/basil-dev/">basildevs.github.io</a>
-                            </div>
-                        </li>
-                        <li>
-                            <span class="icon">▸</span>
-                            <div>
-                                <div style="color:var(--muted);font-size:6pt;font-family:'Fira Code',monospace;">LOCATION</div>
-                                <span>India</span>
-                            </div>
-                        </li>
-                        <li>
-                            <span class="icon">▸</span>
-                            <div>
-                                <div style="color:var(--muted);font-size:6pt;font-family:'Fira Code',monospace;">STATUS</div>
-                                <span style="color:var(--green);">● Available for Work</span>
+                                <div style="color:var(--muted);font-size:5.5pt;font-family:'Fira Code',monospace;">PORTFOLIO</div>
+                                <a href="https://basildevs.github.io/basil-dev/">basildevs.github.io/basil-dev</a>
                             </div>
                         </li>
                     </ul>
                 </div>
 
-                <!-- Technical Skills -->
+                <!-- Core Skills -->
                 <div class="sb-section">
-                    <div class="sb-title">// TECH SKILLS</div>
-
-                    <div class="skill-item">
-                        <div class="skill-label"><span>Unity 2D/3D</span><span class="skill-pct">85%</span></div>
-                        <div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div>
-                    </div>
-                    <div class="skill-item">
-                        <div class="skill-label"><span>C# Scripting</span><span class="skill-pct">75%</span></div>
-                        <div class="skill-bar"><div class="skill-fill" style="width:75%"></div></div>
-                    </div>
-                    <div class="skill-item">
-                        <div class="skill-label"><span>Level Design</span><span class="skill-pct">80%</span></div>
-                        <div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div>
-                    </div>
-                    <div class="skill-item">
-                        <div class="skill-label"><span>Game Design</span><span class="skill-pct">78%</span></div>
-                        <div class="skill-bar"><div class="skill-fill" style="width:78%"></div></div>
-                    </div>
-                    <div class="skill-item">
-                        <div class="skill-label"><span>Scene Setup</span><span class="skill-pct">82%</span></div>
-                        <div class="skill-bar"><div class="skill-fill" style="width:82%"></div></div>
-                    </div>
-                    <div class="skill-item">
-                        <div class="skill-label"><span>Physics & Mechanics</span><span class="skill-pct">70%</span></div>
-                        <div class="skill-bar"><div class="skill-fill" style="width:70%"></div></div>
-                    </div>
-                    <div class="skill-item">
-                        <div class="skill-label"><span>Git / Version Control</span><span class="skill-pct">65%</span></div>
-                        <div class="skill-bar"><div class="skill-fill" style="width:65%"></div></div>
+                    <div class="sb-title">// CORE SKILLS</div>
+                    <div class="tag-cloud">
+                        <span class="tag">Game Design Fundamentals</span>
+                        <span class="tag">Level Design & Layouts</span>
+                        <span class="tag">World Building & Detailing</span>
+                        <span class="tag">Player Experience & Feel</span>
+                        <span class="tag">Unity (2D & 3D)</span>
+                        <span class="tag">Scene & Environment Setup</span>
+                        <span class="tag">Prefab Management</span>
+                        <span class="tag">Indie Game Development</span>
                     </div>
                 </div>
 
-                <!-- Tools -->
+                <!-- Languages -->
                 <div class="sb-section">
-                    <div class="sb-title">// TOOLS</div>
-                    <div class="tag-cloud">
-                        <span class="tag">Unity</span>
-                        <span class="tag">C#</span>
-                        <span class="tag">GitHub</span>
-                        <span class="tag">Blender</span>
-                        <span class="tag">Itch.io</span>
-                        <span class="tag">WebGL</span>
-                        <span class="tag">VS Code</span>
-                        <span class="tag">Rider</span>
-                        <span class="tag">ProBuilder</span>
-                        <span class="tag">Cinemachine</span>
-                    </div>
+                    <div class="sb-title">// LANGUAGES</div>
+                    <ul class="contact-list">
+                        <li><span class="icon">▸</span> English (Professional)</li>
+                        <li><span class="icon">▸</span> Malayalam (Native)</li>
+                    </ul>
                 </div>
 
-                <!-- Design Skills -->
+                <!-- Status -->
                 <div class="sb-section">
-                    <div class="sb-title">// DESIGN FOCUS</div>
-                    <div class="tag-cloud">
-                        <span class="tag">Gameplay Concepts</span>
-                        <span class="tag">Level Layouts</span>
-                        <span class="tag">World Building</span>
-                        <span class="tag">Player Experience</span>
-                        <span class="tag">Visual Environments</span>
-                        <span class="tag">Atmosphere Design</span>
+                    <div class="sb-title">// STATUS</div>
+                    <div style="font-size:6.8pt;color:var(--green);font-weight:700;">
+                        ● Actively Seeking Internships, Junior Roles, or Indie Collaborations
                     </div>
                 </div>
 
             </aside>
 
-            <!-- ============================
-                 MAIN
-                 ============================ -->
+            <!-- MAIN -->
             <main class="main">
 
-                <!-- ABOUT -->
+                <!-- PROFESSIONAL SUMMARY -->
                 <div class="section">
                     <div class="section-header">
-                        <span class="section-label">// PROFILE</span>
+                        <span class="section-label">// PROFESSIONAL SUMMARY</span>
                         <div class="section-line"></div>
                     </div>
                     <p class="about-text">
-                        Passionate Unity Game Developer focused on creating 2D and 3D indie games with strong emphasis on
-                        game design, world building, level layout, and player experience. I focus on creating engaging gameplay
-                        concepts, clear level layouts, and visually appealing environments rather than complex technical systems.
-                        Currently shipping indie projects on Itch.io while building skills across the full Unity development pipeline.
+                        Unity game developer focused on game design, level design, and world building. Experienced in creating indie-scale 2D and 3D games that emphasize gameplay ideas, visual atmosphere, and player experience. Actively seeking internships, junior roles, or indie game collaborations.
                     </p>
                 </div>
 
-                <!-- SHIPPED GAMES -->
+                <!-- PROJECTS -->
                 <div class="section">
                     <div class="section-header">
-                        <span class="section-label">// SHIPPED GAMES</span>
+                        <span class="section-label">// FEATURED PROJECTS</span>
                         <div class="section-line"></div>
                     </div>
 
-                    <!-- Game 1 -->
+                    <!-- Lone Space Rider -->
                     <div class="project-card">
                         <div class="project-top">
                             <span class="project-name">LONE SPACE RIDER</span>
-                            <span class="project-badge">LIVE ON ITCH.IO</span>
+                            <span class="project-badge">3D SCI-FI EXPLORATION</span>
                         </div>
-                        <div class="project-meta">Unity 3D · Space Shooter · Itch.io Release</div>
-                        <p class="project-desc">
-                            A 3D space shooter game set in deep space. Players pilot a lone spacecraft through asteroid
-                            fields and enemy waves. Features custom physics-based flight mechanics, hand-crafted level layouts,
-                            and immersive environmental atmosphere.
-                        </p>
-                        <div class="project-pills">
-                            <span class="pill">Unity 3D</span>
-                            <span class="pill">C#</span>
-                            <span class="pill">Space Shooter</span>
-                            <span class="pill">Level Design</span>
-                            <span class="pill">Physics</span>
-                        </div>
-                        <a class="project-link" href="https://itch.io/profile/basil-devs">▸ itch.io/basil-devs | github.com/basildevs</a>
+                        <div class="project-bullet">Designed a space exploration game where the player travels from the Moon back to Earth through multiple space environments</div>
+                        <div class="project-bullet">Built multiple interactive scenes including Moon base, Loop Street city, Space Station, deep space travel, and Earth landing</div>
+                        <div class="project-bullet">Implemented jet navigation mechanics and mission-based progression between locations</div>
+                        <div class="project-bullet">Integrated background music, environmental sound effects, and navigation systems for immersive gameplay</div>
+                        <div class="project-bullet">Designed environmental layouts and world atmosphere to enhance exploration experience</div>
+                        <div style="font-size:6.2pt;color:var(--cyan);font-family:'Fira Code',monospace;margin-top:1.5mm;">Tools: Unity 3D | C#</div>
                     </div>
 
-                    <!-- Game 2 -->
+                    <!-- Gravity Flip -->
                     <div class="project-card">
                         <div class="project-top">
-                            <span class="project-name">GRAVITYFLIP</span>
-                            <span class="project-badge">LIVE ON ITCH.IO</span>
+                            <span class="project-name">GRAVITY FLIP</span>
+                            <span class="project-badge">2D PLATFORMER / PUZZLE</span>
                         </div>
-                        <div class="project-meta">Unity 2D · Platformer · Itch.io Release</div>
-                        <p class="project-desc">
-                            A 2D platformer where the player can flip gravity at will to navigate challenging obstacle courses.
-                            Features tight responsive controls, precision-designed puzzle levels, and a distinct visual style.
-                            Focused on clean game feel and satisfying level progression.
-                        </p>
-                        <div class="project-pills">
-                            <span class="pill">Unity 2D</span>
-                            <span class="pill">C#</span>
-                            <span class="pill">Platformer</span>
-                            <span class="pill">Puzzle Design</span>
-                            <span class="pill">Game Feel</span>
-                        </div>
-                        <a class="project-link" href="https://itch.io/profile/basil-devs">▸ itch.io/basil-devs | github.com/basildevs</a>
+                        <div class="project-bullet">Designed a gravity-based gameplay concept</div>
+                        <div class="project-bullet">Planned level layout and player paths</div>
+                        <div class="project-bullet">Focused on world building and visual atmosphere</div>
+                        <div class="project-bullet">Improved overall game feel and player experience</div>
+                        <div style="font-size:6.2pt;color:var(--cyan);font-family:'Fira Code',monospace;margin-top:1.5mm;">Tools: Unity 2D | C#</div>
                     </div>
                 </div>
 
@@ -621,44 +521,23 @@
                         <div class="section-line"></div>
                     </div>
                     <div class="edu-item">
-                        <div class="edu-name">Self-Taught Unity Developer</div>
-                        <div class="edu-sub">Independent Study · Ongoing</div>
-                        <div class="edu-desc">Learning Unity, C# scripting, game design principles, and indie game development through hands-on project building, online resources, and community engagement.</div>
+                        <div class="edu-name">Bachelor of Computer Applications (BCA)</div>
+                        <div class="edu-sub">Srinivas University, Mangalore · Completed</div>
+                    </div>
+                    <div class="edu-item">
+                        <div class="edu-name">Game Development</div>
+                        <div class="edu-sub">BigBoy School of Gaming, Palarivattom</div>
                     </div>
                 </div>
 
-                <!-- PHILOSOPHY -->
+                <!-- DECLARATION -->
                 <div class="section">
                     <div class="section-header">
-                        <span class="section-label">// DESIGN PHILOSOPHY</span>
+                        <span class="section-label">// DECLARATION</span>
                         <div class="section-line"></div>
                     </div>
-                    <div class="philosophy-box">
-                        I focus on creating engaging gameplay concepts, clear level layouts, and visually appealing environments
-                        rather than complex technical systems. My goal is to craft player experiences that feel atmospheric,
-                        intuitive, and genuinely fun — even within the constraints of indie development.
-                    </div>
-                </div>
-
-                <!-- LINKS ROW -->
-                <div class="section" style="margin-top:auto;">
-                    <div class="section-header">
-                        <span class="section-label">// ONLINE PRESENCE</span>
-                        <div class="section-line"></div>
-                    </div>
-                    <div style="display:flex;gap:4mm;flex-wrap:wrap;">
-                        <div class="project-card" style="flex:1;min-width:40mm;margin-bottom:0;">
-                            <div style="font-size:6.5pt;color:var(--muted);font-family:'Fira Code',monospace;">LIVE PORTFOLIO</div>
-                            <div style="font-size:7.5pt;color:var(--cyan);margin-top:1mm;">basildevs.github.io/basil-dev</div>
-                        </div>
-                        <div class="project-card" style="flex:1;min-width:40mm;margin-bottom:0;">
-                            <div style="font-size:6.5pt;color:var(--muted);font-family:'Fira Code',monospace;">GAME RELEASES</div>
-                            <div style="font-size:7.5pt;color:var(--cyan);margin-top:1mm;">itch.io/profile/basil-devs</div>
-                        </div>
-                        <div class="project-card" style="flex:1;min-width:40mm;margin-bottom:0;">
-                            <div style="font-size:6.5pt;color:var(--muted);font-family:'Fira Code',monospace;">SOURCE CODE</div>
-                            <div style="font-size:7.5pt;color:var(--purple);margin-top:1mm;">github.com/basildevs</div>
-                        </div>
+                    <div class="declaration-box">
+                        I hereby declare that the information provided above is true and correct to the best of my knowledge and belief. I am eager to apply my skills in game development, learn new technologies, and contribute effectively to creative and interactive projects.
                     </div>
                 </div>
 
