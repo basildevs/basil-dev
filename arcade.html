@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FUN ARCADE ROOM // Basil Jijo Portfolio Mini-Games</title>
+    <meta name="description" content="Playable retro mini-games in browser created for fun and gameplay experimentation by Unity Game Developer Basil Jijo.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Rajdhani:wght@600;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="cyber-theme">
+    <!-- Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Header HUD -->
+    <header class="hud-header">
+        <div class="hud-container">
+            <a href="index.html" class="hud-logo">
+                <span class="logo-icon">❖</span>
+                <span class="logo-text">BASIL<span class="highlight">//</span>ARCADE</span>
+            </a>
+
+            <nav class="hud-nav">
+                <a href="index.html" class="nav-link"><i data-lucide="arrow-left"></i> BACK TO PORTFOLIO</a>
+            </nav>
+
+            <div class="hud-actions">
+                <button id="sfx-toggle" class="hud-btn" title="Toggle Sound FX">
+                    <i data-lucide="volume-2"></i> <span class="btn-text">SFX: ON</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Arcade Room Wrapper -->
+    <main class="main-content section-padding" style="padding-top: 120px;">
+        <div class="cyber-container">
+            <!-- Section Header -->
+            <div class="section-header">
+                <div class="section-tag">// FUN_ARCADE_ROOM.EXE</div>
+                <h2 class="section-title">RETRO MINI-GAME LAB</h2>
+                <p class="section-desc">Select any of the 3 mini-games below to play right in your browser! Built for fun and mechanic testing.</p>
+            </div>
+
+            <!-- Arcade Cabinet Card -->
+            <div class="glass-panel" style="padding: 2rem; max-width: 960px; margin: 0 auto;">
+                <!-- Game Selector Tabs -->
+                <div class="arcade-controls" style="margin-bottom: 1.5rem;">
+                    <div class="filter-tabs" id="arcade-game-tabs">
+                        <button class="filter-btn active" data-arcade="0">🚀 1. SPACE DEFENDER 2099</button>
+                        <button class="filter-btn" data-arcade="1">🌀 2. GRAVITY FLIP RUNNER</button>
+                        <button class="filter-btn" data-arcade="2">🧱 3. CYBER BRICK BREAKER</button>
+                    </div>
+                </div>
+
+                <!-- Main Game Viewport Canvas -->
+                <div class="arcade-viewport">
+                    <canvas id="arcade-room-canvas" width="800" height="450"></canvas>
+                    
+                    <div id="arcade-room-overlay" class="arcade-start-screen">
+                        <h2 id="arcade-title-text">SPACE DEFENDER 2099</h2>
+                        <p id="arcade-desc-text">Press [START MISSION] or SPACEBAR to initiate Arcade Combat!</p>
+                        <button id="start-arcade-room-btn" class="cyber-btn primary-btn">
+                            <span class="btn-content"><i data-lucide="play"></i> START MISSION</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Controls Guide & HUD Stats -->
+                <div class="arcade-hud-controls">
+                    <div class="controls-guide" id="arcade-controls-guide">
+                        <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Move Ship</span>
+                        <span><kbd>SPACE</kbd> Shoot Lasers</span>
+                    </div>
+
+                    <div class="arcade-stats-hud">
+                        <span>SCORE: <strong id="room-score">0000</strong></span>
+                        <span>LIVES: <strong id="room-lives">❤❤❤</strong></span>
+                        <span>STATUS: <strong id="room-status" style="color: var(--neon-cyan);">READY</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Return Link -->
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="index.html" class="cyber-btn outline-btn">
+                    <span class="btn-content"><i data-lucide="arrow-left"></i> RETURN TO MAIN PORTFOLIO</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="cyber-footer">
+        <div class="cyber-container footer-flex">
+            <div class="footer-brand">
+                <span class="logo-icon">❖</span> BASIL JIJO // FUN ARCADE ROOM
+                <p class="copyright">© 2026 Basil Jijo. Built for fun & gameplay experimentation.</p>
+            </div>
+            <div class="social-links">
+                <a href="https://basil-devs.itch.io" target="_blank" class="social-icon" title="Itch.io Profile"><i data-lucide="gamepad-2"></i></a>
+                <a href="https://github.com/basildevs" target="_blank" class="social-icon" title="GitHub Repositories"><i data-lucide="github"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Arcade Script Engine -->
+    <script src="script.js"></script>
+    <script src="arcade.js"></script>
+</body>
+</html>
