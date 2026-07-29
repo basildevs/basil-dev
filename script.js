@@ -27,261 +27,320 @@ function initBackgroundCanvas() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    let width = canvas.width = window.innerWidth;
+    let width  = canvas.width  = window.innerWidth;
     let height = canvas.height = window.innerHeight;
 
-    let mouseX = width / 2;
-    let mouseY = height / 2;
-    let targetMouseX = width / 2;
-    let targetMouseY = height / 2;
+    // Smooth mouse
+    let mouseX = width / 2, mouseY = height / 2;
+    let targetX = width / 2, targetY = height / 2;
 
-    const shockwaves = [];
-    const cyberEmbers = [];
+    // Effect pools
+    const shockwaves  = [];
+    const embers      = [];
+    const mouseTrail  = [];
+    const shootingStars = [];
 
+    // ── Resize ──────────────────────────────────────────────
     window.addEventListener('resize', () => {
-        width = canvas.width = window.innerWidth;
+        width  = canvas.width  = window.innerWidth;
         height = canvas.height = window.innerHeight;
     });
 
+    // ── Mouse move ───────────────────────────────────────────
     window.addEventListener('mousemove', (e) => {
-        targetMouseX = e.clientX;
-        targetMouseY = e.clientY;
+        targetX = e.clientX;
+        targetY = e.clientY;
+        mouseTrail.push({ x: e.clientX, y: e.clientY, alpha: 1 });
+        if (mouseTrail.length > 28) mouseTrail.shift();
     });
 
+    // ── Click → Shockwave + Ember burst ─────────────────────
     window.addEventListener('click', (e) => {
-        shockwaves.push({
-            x: e.clientX,
-            y: e.clientY,
-            radius: 5,
-            maxRadius: 220,
-            alpha: 1
+        // 3 concentric shockwave rings
+        [0, 60, 130].forEach((delay, idx) => {
+            setTimeout(() => {
+                shockwaves.push({
+                    x: e.clientX, y: e.clientY,
+                    radius: 5 + idx * 20,
+                    maxRadius: 260 + idx * 40,
+                    speed: 8 - idx * 1.5,
+                    alpha: 0.9 - idx * 0.2,
+                    color: idx === 0 ? '0,240,255' : idx === 1 ? '157,78,221' : '255,0,127'
+                });
+            }, delay);
         });
 
-        // Spawn sparkling cyber embers on click
-        for (let i = 0; i < 22; i++) {
+        // 40 ember sparks
+        for (let i = 0; i < 40; i++) {
             const angle = Math.random() * Math.PI * 2;
-            const speed = Math.random() * 6 + 2;
-            cyberEmbers.push({
-                x: e.clientX,
-                y: e.clientY,
+            const speed = Math.random() * 9 + 2;
+            embers.push({
+                x: e.clientX, y: e.clientY,
                 vx: Math.cos(angle) * speed,
                 vy: Math.sin(angle) * speed,
-                size: Math.random() * 3 + 1,
-                color: Math.random() > 0.4 ? '#00f0ff' : '#ff007f',
-                alpha: 1
+                size: Math.random() * 4 + 1,
+                color: ['#00f0ff','#ff007f','#9d4edd','#00ff88'][Math.floor(Math.random()*4)],
+                alpha: 1,
+                decay: 0.018 + Math.random() * 0.015
             });
         }
     });
 
-    // Color Palette
-    const colors = [
-        'rgba(0, 240, 255, ',   // Neon Cyan
-        'rgba(157, 78, 221, ',  // Neon Purple
-        'rgba(255, 0, 127, ',   // Cyber Pink
-        'rgba(0, 255, 136, '    // Neon Green
+    // ── Particle colours ─────────────────────────────────────
+    const COLORS = [
+        [0,   240, 255],  // cyan
+        [157, 78,  221],  // purple
+        [255, 0,   127],  // pink
+        [0,   255, 136],  // green
+        [80,  160, 255],  // blue
     ];
 
-    // 160 Interactive Nodes
-    const particleCount = 160;
-    const particles = [];
-    for (let i = 0; i < particleCount; i++) {
-        particles.push({
+    // ── 300 Main Particles ───────────────────────────────────
+    const PCOUNT = 300;
+    const particles = Array.from({ length: PCOUNT }, () => {
+        const rgb = COLORS[Math.floor(Math.random() * COLORS.length)];
+        return {
             x: Math.random() * width,
             y: Math.random() * height,
-            vx: (Math.random() - 0.5) * 0.7,
-            vy: (Math.random() - 0.5) * 0.7,
-            size: Math.random() * 2.2 + 0.8,
-            colorPrefix: colors[Math.floor(Math.random() * colors.length)],
-            alpha: Math.random() * 0.6 + 0.4,
-            pulse: Math.random() * Math.PI
+            vx: (Math.random() - 0.5) * 0.8,
+            vy: (Math.random() - 0.5) * 0.8,
+            size: Math.random() * 2.5 + 0.5,
+            rgb, pulse: Math.random() * Math.PI * 2,
+            alpha: Math.random() * 0.5 + 0.4,
+            isHot: Math.random() < 0.12   // 12% bright hot nodes
+        };
+    });
+
+    // ── Shooting Star spawner ────────────────────────────────
+    function spawnShootingStar() {
+        shootingStars.push({
+            x: Math.random() * width,
+            y: -10,
+            vx: (Math.random() - 0.3) * 6,
+            vy: Math.random() * 7 + 4,
+            len: Math.random() * 120 + 60,
+            alpha: 1,
+            color: Math.random() > 0.5 ? '0,240,255' : '157,78,221'
         });
     }
+    setInterval(spawnShootingStar, 900);
 
-    // Floating Nebula Gas Spheres
-    const nebulae = [
-        { x: width * 0.2, y: height * 0.3, radius: 320, color: 'rgba(0, 240, 255, 0.035)', vx: 0.15, vy: 0.1 },
-        { x: width * 0.8, y: height * 0.7, radius: 380, color: 'rgba(157, 78, 221, 0.04)', vx: -0.12, vy: -0.08 },
-        { x: width * 0.5, y: height * 0.5, radius: 280, color: 'rgba(255, 0, 127, 0.025)', vx: 0.08, vy: -0.12 }
-    ];
+    // ── Grid offset ──────────────────────────────────────────
+    let gridOff = 0;
+    let frame   = 0;
 
-    let gridOffset = 0;
-
+    // ── MAIN RENDER LOOP ─────────────────────────────────────
     function render() {
-        // Smooth mouse lag
-        mouseX += (targetMouseX - mouseX) * 0.1;
-        mouseY += (targetMouseY - mouseY) * 0.1;
+        frame++;
 
-        ctx.clearRect(0, 0, width, height);
+        // Smooth mouse
+        mouseX += (targetX - mouseX) * 0.1;
+        mouseY += (targetY - mouseY) * 0.1;
 
-        // Deep Space Multi-Stop Background
-        const bgGrad = ctx.createRadialGradient(
-            mouseX, mouseY, 50,
-            width / 2, height / 2, Math.max(width, height)
-        );
-        bgGrad.addColorStop(0, '#0a0d20');
-        bgGrad.addColorStop(0.5, '#050712');
-        bgGrad.addColorStop(1, '#020308');
-        ctx.fillStyle = bgGrad;
+        // ── TRUE BLACK background ────────────────────────────
+        ctx.fillStyle = '#000000';
         ctx.fillRect(0, 0, width, height);
 
-        // Render Floating Nebulae
-        nebulae.forEach(n => {
-            n.x += n.vx;
-            n.y += n.vy;
-            if (n.x < -100 || n.x > width + 100) n.vx *= -1;
-            if (n.y < -100 || n.y > height + 100) n.vy *= -1;
+        // ── Very subtle deep glow at cursor ─────────────────
+        const cursorAura = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 350);
+        cursorAura.addColorStop(0, 'rgba(0,240,255,0.04)');
+        cursorAura.addColorStop(1, 'transparent');
+        ctx.fillStyle = cursorAura;
+        ctx.fillRect(0, 0, width, height);
 
-            const nGrad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.radius);
-            nGrad.addColorStop(0, n.color);
-            nGrad.addColorStop(1, 'transparent');
-            ctx.fillStyle = nGrad;
+        // ── Perspective grid – scrolling toward viewer ───────
+        gridOff = (gridOff + 0.4) % 80;
+        ctx.lineWidth = 0.5;
+
+        // Horizontal lines converging to horizon
+        for (let row = 0; row < 20; row++) {
+            const yRaw = (row / 20) * height + gridOff * (row / 20);
+            const a = 0.03 + (row / 20) * 0.04;
+            ctx.strokeStyle = `rgba(0,240,255,${a})`;
             ctx.beginPath();
-            ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.moveTo(0, yRaw);
+            ctx.lineTo(width, yRaw);
+            ctx.stroke();
+        }
+        // Vertical lines
+        const vCount = 18;
+        for (let col = 0; col <= vCount; col++) {
+            const xRaw = (col / vCount) * width;
+            const a = 0.025;
+            ctx.strokeStyle = `rgba(0,240,255,${a})`;
+            ctx.beginPath();
+            ctx.moveTo(xRaw, height / 2);
+            ctx.lineTo(xRaw, height);
+            ctx.stroke();
+        }
+
+        // ── DNA Helix spirals in corners ─────────────────────
+        const t = frame * 0.018;
+        const helixPoints = 30;
+        [[40, height/2], [width-40, height/2]].forEach(([hx, hy], si) => {
+            for (let k = 0; k < helixPoints; k++) {
+                const ang = t + k * 0.28 + si * Math.PI;
+                const yy  = hy - 260 + k * 17;
+                const xx1 = hx + Math.cos(ang) * 22;
+                const xx2 = hx + Math.cos(ang + Math.PI) * 22;
+                const prog = k / helixPoints;
+
+                ctx.fillStyle = `rgba(0,240,255,${0.5 * prog})`;
+                ctx.beginPath();
+                ctx.arc(xx1, yy, 2.5, 0, Math.PI*2);
+                ctx.fill();
+
+                ctx.fillStyle = `rgba(157,78,221,${0.5 * prog})`;
+                ctx.beginPath();
+                ctx.arc(xx2, yy, 2.5, 0, Math.PI*2);
+                ctx.fill();
+
+                // rung connecting strands
+                if (k % 4 === 0) {
+                    ctx.strokeStyle = `rgba(255,255,255,${0.08 * prog})`;
+                    ctx.lineWidth = 0.8;
+                    ctx.beginPath();
+                    ctx.moveTo(xx1, yy);
+                    ctx.lineTo(xx2, yy);
+                    ctx.stroke();
+                }
+            }
         });
 
-        // Cyber Grid Lines with Cursor Highlight
-        const gridSize = 60;
-        gridOffset = (gridOffset + 0.25) % gridSize;
+        // ── Shooting Stars ───────────────────────────────────
+        for (let i = shootingStars.length - 1; i >= 0; i--) {
+            const s = shootingStars[i];
+            s.x += s.vx; s.y += s.vy;
+            s.alpha -= 0.012;
 
-        ctx.strokeStyle = 'rgba(0, 240, 255, 0.035)';
-        ctx.lineWidth = 1;
-
-        for (let x = 0; x < width; x += gridSize) {
+            const grad = ctx.createLinearGradient(s.x, s.y, s.x - s.vx * (s.len/s.vy), s.y - s.len);
+            grad.addColorStop(0, `rgba(${s.color},${s.alpha})`);
+            grad.addColorStop(1, `rgba(${s.color},0)`);
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = 1.5;
             ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, height);
+            ctx.moveTo(s.x, s.y);
+            ctx.lineTo(s.x - s.vx * (s.len/s.vy), s.y - s.len);
             ctx.stroke();
+
+            if (s.alpha <= 0 || s.y > height + 20) shootingStars.splice(i, 1);
         }
 
-        for (let y = gridOffset; y < height; y += gridSize) {
+        // ── Mouse Trail ──────────────────────────────────────
+        for (let i = mouseTrail.length - 1; i >= 0; i--) {
+            const tp = mouseTrail[i];
+            const prog = i / mouseTrail.length;
+            ctx.fillStyle = `rgba(0,240,255,${prog * 0.35})`;
+            ctx.shadowColor = '#00f0ff';
+            ctx.shadowBlur = 6;
             ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(width, y);
-            ctx.stroke();
+            ctx.arc(tp.x, tp.y, prog * 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
         }
 
-        // Interactive Cursor Grid Glow
-        const cursorGlow = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 220);
-        cursorGlow.addColorStop(0, 'rgba(0, 240, 255, 0.07)');
-        cursorGlow.addColorStop(1, 'transparent');
-        ctx.fillStyle = cursorGlow;
-        ctx.beginPath();
-        ctx.arc(mouseX, mouseY, 220, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Update & Render Shockwaves
+        // ── Shockwaves ───────────────────────────────────────
         for (let i = shockwaves.length - 1; i >= 0; i--) {
             const sw = shockwaves[i];
-            sw.radius += 7;
-            sw.alpha -= 0.02;
+            sw.radius += sw.speed;
+            sw.alpha  -= 0.016;
 
-            ctx.strokeStyle = `rgba(0, 240, 255, ${sw.alpha})`;
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = `rgba(${sw.color},${sw.alpha})`;
+            ctx.lineWidth = 1.5;
             ctx.beginPath();
             ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
             ctx.stroke();
 
-            // Push particles outward from shockwave
+            // Push particles
             particles.forEach(p => {
-                const pdx = p.x - sw.x;
-                const pdy = p.y - sw.y;
-                const pdist = Math.hypot(pdx, pdy);
-                if (Math.abs(pdist - sw.radius) < 25 && pdist > 0) {
-                    p.vx += (pdx / pdist) * 2;
-                    p.vy += (pdy / pdist) * 2;
+                const pdx = p.x - sw.x, pdy = p.y - sw.y;
+                const pd  = Math.hypot(pdx, pdy);
+                if (Math.abs(pd - sw.radius) < 30 && pd > 0) {
+                    p.vx += (pdx / pd) * 2.5;
+                    p.vy += (pdy / pd) * 2.5;
                 }
             });
 
-            if (sw.alpha <= 0 || sw.radius >= sw.maxRadius) {
-                shockwaves.splice(i, 1);
-            }
+            if (sw.alpha <= 0 || sw.radius >= sw.maxRadius) shockwaves.splice(i, 1);
         }
 
-        // Render Click Embers
-        for (let i = cyberEmbers.length - 1; i >= 0; i--) {
-            const e = cyberEmbers[i];
-            e.x += e.vx;
-            e.y += e.vy;
-            e.vx *= 0.95;
-            e.vy *= 0.95;
-            e.alpha -= 0.025;
-
+        // ── Click Embers ─────────────────────────────────────
+        for (let i = embers.length - 1; i >= 0; i--) {
+            const e = embers[i];
+            e.x += e.vx; e.y += e.vy;
+            e.vx *= 0.93; e.vy *= 0.93;
+            e.alpha -= e.decay;
             ctx.fillStyle = e.color;
             ctx.globalAlpha = e.alpha;
-            ctx.fillRect(e.x, e.y, e.size, e.size);
+            ctx.shadowColor = e.color;
+            ctx.shadowBlur  = 6;
+            ctx.fillRect(e.x - e.size/2, e.y - e.size/2, e.size, e.size);
+            ctx.shadowBlur  = 0;
             ctx.globalAlpha = 1;
-
-            if (e.alpha <= 0) cyberEmbers.splice(i, 1);
+            if (e.alpha <= 0) embers.splice(i, 1);
         }
 
-        // Update & Draw Particles & Constellation Lasers
-        for (let i = 0; i < particleCount; i++) {
+        // ── Particles & Constellation Web ────────────────────
+        ctx.save();
+        for (let i = 0; i < PCOUNT; i++) {
             const p = particles[i];
+            p.pulse += 0.025;
+            const sz = p.size + Math.sin(p.pulse) * 0.5;
 
-            p.pulse += 0.03;
-            const currentSize = p.size + Math.sin(p.pulse) * 0.4;
-
+            // Drift + friction
             p.x += p.vx;
             p.y += p.vy;
+            p.vx *= 0.992;
+            p.vy *= 0.992;
 
-            // Friction
-            p.vx *= 0.99;
-            p.vy *= 0.99;
+            // Wrap
+            if (p.x < 0) p.x = width;  if (p.x > width)  p.x = 0;
+            if (p.y < 0) p.y = height; if (p.y > height) p.y = 0;
 
-            // Screen Wrap
-            if (p.x < 0) p.x = width;
-            if (p.x > width) p.x = 0;
-            if (p.y < 0) p.y = height;
-            if (p.y > height) p.y = 0;
-
-            // Mouse Interaction (Magnet & Push)
-            const dx = mouseX - p.x;
-            const dy = mouseY - p.y;
+            // Mouse repel zone / laser filaments
+            const dx   = mouseX - p.x;
+            const dy   = mouseY - p.y;
             const dist = Math.hypot(dx, dy);
-
-            if (dist < 150) {
-                // Laser filament to cursor
-                const alpha = (1 - dist / 150) * 0.6;
-                ctx.strokeStyle = `rgba(0, 240, 255, ${alpha})`;
+            if (dist < 180 && dist > 0) {
+                const fa = (1 - dist / 180) * 0.5;
+                ctx.strokeStyle = `rgba(${p.rgb[0]},${p.rgb[1]},${p.rgb[2]},${fa})`;
                 ctx.lineWidth = 0.8;
                 ctx.beginPath();
                 ctx.moveTo(p.x, p.y);
                 ctx.lineTo(mouseX, mouseY);
                 ctx.stroke();
-
-                // Gentle magnetic drift
-                p.x -= (dx / dist) * 0.6;
-                p.y -= (dy / dist) * 0.6;
+                p.vx -= (dx / dist) * 0.35;
+                p.vy -= (dy / dist) * 0.35;
             }
 
-            // Connect lines between close particles
-            for (let j = i + 1; j < particleCount; j++) {
-                const p2 = particles[j];
-                const pdx = p2.x - p.x;
-                const pdy = p2.y - p.y;
-                const pdist = Math.hypot(pdx, pdy);
-
-                if (pdist < 110) {
-                    const lineAlpha = (1 - pdist / 110) * 0.25;
-                    ctx.strokeStyle = p.colorPrefix + lineAlpha + ')';
-                    ctx.lineWidth = 0.6;
+            // Constellation connections
+            for (let j = i + 1; j < PCOUNT; j++) {
+                const q   = particles[j];
+                const qd  = Math.hypot(q.x - p.x, q.y - p.y);
+                if (qd < 120) {
+                    const la = (1 - qd / 120) * 0.22;
+                    ctx.strokeStyle = `rgba(${p.rgb[0]},${p.rgb[1]},${p.rgb[2]},${la})`;
+                    ctx.lineWidth = 0.5;
                     ctx.beginPath();
                     ctx.moveTo(p.x, p.y);
-                    ctx.lineTo(p2.x, p2.y);
+                    ctx.lineTo(q.x, q.y);
                     ctx.stroke();
                 }
             }
 
-            // Draw Node Dot
-            ctx.fillStyle = p.colorPrefix + p.alpha + ')';
-            ctx.shadowColor = p.colorPrefix + '1)';
-            ctx.shadowBlur = 8;
+            // Draw dot
+            const r = p.rgb;
+            if (p.isHot) {
+                ctx.shadowColor = `rgb(${r[0]},${r[1]},${r[2]})`;
+                ctx.shadowBlur  = 18;
+            }
+            ctx.fillStyle = `rgba(${r[0]},${r[1]},${r[2]},${p.alpha})`;
             ctx.beginPath();
-            ctx.arc(p.x, p.y, Math.max(0.5, currentSize), 0, Math.PI * 2);
+            ctx.arc(p.x, p.y, Math.max(0.4, sz), 0, Math.PI * 2);
             ctx.fill();
             ctx.shadowBlur = 0;
         }
+        ctx.restore();
 
         requestAnimationFrame(render);
     }
