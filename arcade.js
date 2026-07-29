@@ -48,6 +48,23 @@ document.addEventListener('DOMContentLoaded', () => {
         mouseX = e.clientX - rect.left;
     });
 
+    canvas.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches[0]) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            mouseX = (e.touches[0].clientX - rect.left) * scaleX;
+        }
+    }, { passive: true });
+
+    canvas.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0]) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            mouseX = (e.touches[0].clientX - rect.left) * scaleX;
+            if (gameActive) handleSpacePress();
+        }
+    }, { passive: true });
+
     canvas.addEventListener('click', () => {
         if (gameActive && currentGameIndex === 1) { // Gravity Flip on click
             flipGravity();

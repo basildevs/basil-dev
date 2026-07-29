@@ -46,21 +46,29 @@ function initBackgroundCanvas() {
         height = canvas.height = window.innerHeight;
     });
 
-    // ── Mouse move ───────────────────────────────────────────
-    window.addEventListener('mousemove', (e) => {
-        targetX = e.clientX;
-        targetY = e.clientY;
-        mouseTrail.push({ x: e.clientX, y: e.clientY, alpha: 1 });
+    // ── Mouse & Touch Move Handlers ───────────────────────────
+    function handlePointerMove(clientX, clientY) {
+        targetX = clientX;
+        targetY = clientY;
+        mouseTrail.push({ x: clientX, y: clientY, alpha: 1 });
         if (mouseTrail.length > 28) mouseTrail.shift();
-    });
+    }
 
-    // ── Click → Shockwave + Ember burst ─────────────────────
-    window.addEventListener('click', (e) => {
+    window.addEventListener('mousemove', (e) => handlePointerMove(e.clientX, e.clientY));
+
+    window.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches[0]) {
+            handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
+    }, { passive: true });
+
+    // ── Click & Touch Action → Shockwave + Ember burst ───────
+    function triggerBurst(clientX, clientY) {
         // 3 concentric shockwave rings
         [0, 60, 130].forEach((delay, idx) => {
             setTimeout(() => {
                 shockwaves.push({
-                    x: e.clientX, y: e.clientY,
+                    x: clientX, y: clientY,
                     radius: 5 + idx * 20,
                     maxRadius: 260 + idx * 40,
                     speed: 8 - idx * 1.5,
@@ -75,7 +83,7 @@ function initBackgroundCanvas() {
             const angle = Math.random() * Math.PI * 2;
             const speed = Math.random() * 9 + 2;
             embers.push({
-                x: e.clientX, y: e.clientY,
+                x: clientX, y: clientY,
                 vx: Math.cos(angle) * speed,
                 vy: Math.sin(angle) * speed,
                 size: Math.random() * 4 + 1,
@@ -84,7 +92,16 @@ function initBackgroundCanvas() {
                 decay: 0.018 + Math.random() * 0.015
             });
         }
-    });
+    }
+
+    window.addEventListener('click', (e) => triggerBurst(e.clientX, e.clientY));
+
+    window.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0]) {
+            handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
+            triggerBurst(e.touches[0].clientX, e.touches[0].clientY);
+        }
+    }, { passive: true });
 
     // ── Particle colours ─────────────────────────────────────
     const COLORS = [
@@ -95,8 +112,9 @@ function initBackgroundCanvas() {
         [80,  160, 255],  // blue
     ];
 
-    // ── 300 Main Particles ───────────────────────────────────
-    const PCOUNT = 300;
+    // ── Main Particles (Responsive density: 160 mobile, 300 desktop) ──
+    const isMobile = window.innerWidth < 768;
+    const PCOUNT = isMobile ? 160 : 300;
     const particles = Array.from({ length: PCOUNT }, () => {
         const rgb = COLORS[Math.floor(Math.random() * COLORS.length)];
         return {
