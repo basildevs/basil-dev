@@ -32,6 +32,11 @@ function initBackgroundCanvas() {
 
     let mouseX = width / 2;
     let mouseY = height / 2;
+    let targetMouseX = width / 2;
+    let targetMouseY = height / 2;
+
+    const shockwaves = [];
+    const cyberEmbers = [];
 
     window.addEventListener('resize', () => {
         width = canvas.width = window.innerWidth;
@@ -39,46 +44,108 @@ function initBackgroundCanvas() {
     });
 
     window.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
+        targetMouseX = e.clientX;
+        targetMouseY = e.clientY;
     });
 
-    // Particle Matrix Stars
-    const particleCount = 80;
+    window.addEventListener('click', (e) => {
+        shockwaves.push({
+            x: e.clientX,
+            y: e.clientY,
+            radius: 5,
+            maxRadius: 220,
+            alpha: 1
+        });
+
+        // Spawn sparkling cyber embers on click
+        for (let i = 0; i < 22; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 6 + 2;
+            cyberEmbers.push({
+                x: e.clientX,
+                y: e.clientY,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                size: Math.random() * 3 + 1,
+                color: Math.random() > 0.4 ? '#00f0ff' : '#ff007f',
+                alpha: 1
+            });
+        }
+    });
+
+    // Color Palette
+    const colors = [
+        'rgba(0, 240, 255, ',   // Neon Cyan
+        'rgba(157, 78, 221, ',  // Neon Purple
+        'rgba(255, 0, 127, ',   // Cyber Pink
+        'rgba(0, 255, 136, '    // Neon Green
+    ];
+
+    // 160 Interactive Nodes
+    const particleCount = 160;
     const particles = [];
     for (let i = 0; i < particleCount; i++) {
         particles.push({
             x: Math.random() * width,
             y: Math.random() * height,
-            size: Math.random() * 2 + 0.5,
-            speedX: (Math.random() - 0.5) * 0.4,
-            speedY: (Math.random() - 0.5) * 0.4,
-            color: Math.random() > 0.5 ? 'rgba(0, 240, 255, ' : 'rgba(157, 78, 221, ',
-            alpha: Math.random() * 0.7 + 0.3
+            vx: (Math.random() - 0.5) * 0.7,
+            vy: (Math.random() - 0.5) * 0.7,
+            size: Math.random() * 2.2 + 0.8,
+            colorPrefix: colors[Math.floor(Math.random() * colors.length)],
+            alpha: Math.random() * 0.6 + 0.4,
+            pulse: Math.random() * Math.PI
         });
     }
+
+    // Floating Nebula Gas Spheres
+    const nebulae = [
+        { x: width * 0.2, y: height * 0.3, radius: 320, color: 'rgba(0, 240, 255, 0.035)', vx: 0.15, vy: 0.1 },
+        { x: width * 0.8, y: height * 0.7, radius: 380, color: 'rgba(157, 78, 221, 0.04)', vx: -0.12, vy: -0.08 },
+        { x: width * 0.5, y: height * 0.5, radius: 280, color: 'rgba(255, 0, 127, 0.025)', vx: 0.08, vy: -0.12 }
+    ];
 
     let gridOffset = 0;
 
     function render() {
+        // Smooth mouse lag
+        mouseX += (targetMouseX - mouseX) * 0.1;
+        mouseY += (targetMouseY - mouseY) * 0.1;
+
         ctx.clearRect(0, 0, width, height);
 
-        // Dark Gradient Base
+        // Deep Space Multi-Stop Background
         const bgGrad = ctx.createRadialGradient(
-            width / 2, height / 2, 100,
+            mouseX, mouseY, 50,
             width / 2, height / 2, Math.max(width, height)
         );
-        bgGrad.addColorStop(0, '#0f1422');
-        bgGrad.addColorStop(1, '#07090e');
+        bgGrad.addColorStop(0, '#0a0d20');
+        bgGrad.addColorStop(0.5, '#050712');
+        bgGrad.addColorStop(1, '#020308');
         ctx.fillStyle = bgGrad;
         ctx.fillRect(0, 0, width, height);
 
-        // Cyber Grid Lines
-        ctx.strokeStyle = 'rgba(0, 240, 255, 0.04)';
-        ctx.lineWidth = 1;
+        // Render Floating Nebulae
+        nebulae.forEach(n => {
+            n.x += n.vx;
+            n.y += n.vy;
+            if (n.x < -100 || n.x > width + 100) n.vx *= -1;
+            if (n.y < -100 || n.y > height + 100) n.vy *= -1;
 
-        const gridSize = 50;
-        gridOffset = (gridOffset + 0.2) % gridSize;
+            const nGrad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.radius);
+            nGrad.addColorStop(0, n.color);
+            nGrad.addColorStop(1, 'transparent');
+            ctx.fillStyle = nGrad;
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        // Cyber Grid Lines with Cursor Highlight
+        const gridSize = 60;
+        gridOffset = (gridOffset + 0.25) % gridSize;
+
+        ctx.strokeStyle = 'rgba(0, 240, 255, 0.035)';
+        ctx.lineWidth = 1;
 
         for (let x = 0; x < width; x += gridSize) {
             ctx.beginPath();
@@ -94,30 +161,127 @@ function initBackgroundCanvas() {
             ctx.stroke();
         }
 
-        // Draw Stars & Mouse Pull Effect
-        particles.forEach(p => {
-            p.x += p.speedX;
-            p.y += p.speedY;
+        // Interactive Cursor Grid Glow
+        const cursorGlow = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 220);
+        cursorGlow.addColorStop(0, 'rgba(0, 240, 255, 0.07)');
+        cursorGlow.addColorStop(1, 'transparent');
+        ctx.fillStyle = cursorGlow;
+        ctx.beginPath();
+        ctx.arc(mouseX, mouseY, 220, 0, Math.PI * 2);
+        ctx.fill();
 
+        // Update & Render Shockwaves
+        for (let i = shockwaves.length - 1; i >= 0; i--) {
+            const sw = shockwaves[i];
+            sw.radius += 7;
+            sw.alpha -= 0.02;
+
+            ctx.strokeStyle = `rgba(0, 240, 255, ${sw.alpha})`;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Push particles outward from shockwave
+            particles.forEach(p => {
+                const pdx = p.x - sw.x;
+                const pdy = p.y - sw.y;
+                const pdist = Math.hypot(pdx, pdy);
+                if (Math.abs(pdist - sw.radius) < 25 && pdist > 0) {
+                    p.vx += (pdx / pdist) * 2;
+                    p.vy += (pdy / pdist) * 2;
+                }
+            });
+
+            if (sw.alpha <= 0 || sw.radius >= sw.maxRadius) {
+                shockwaves.splice(i, 1);
+            }
+        }
+
+        // Render Click Embers
+        for (let i = cyberEmbers.length - 1; i >= 0; i--) {
+            const e = cyberEmbers[i];
+            e.x += e.vx;
+            e.y += e.vy;
+            e.vx *= 0.95;
+            e.vy *= 0.95;
+            e.alpha -= 0.025;
+
+            ctx.fillStyle = e.color;
+            ctx.globalAlpha = e.alpha;
+            ctx.fillRect(e.x, e.y, e.size, e.size);
+            ctx.globalAlpha = 1;
+
+            if (e.alpha <= 0) cyberEmbers.splice(i, 1);
+        }
+
+        // Update & Draw Particles & Constellation Lasers
+        for (let i = 0; i < particleCount; i++) {
+            const p = particles[i];
+
+            p.pulse += 0.03;
+            const currentSize = p.size + Math.sin(p.pulse) * 0.4;
+
+            p.x += p.vx;
+            p.y += p.vy;
+
+            // Friction
+            p.vx *= 0.99;
+            p.vy *= 0.99;
+
+            // Screen Wrap
             if (p.x < 0) p.x = width;
             if (p.x > width) p.x = 0;
             if (p.y < 0) p.y = height;
             if (p.y > height) p.y = 0;
 
+            // Mouse Interaction (Magnet & Push)
             const dx = mouseX - p.x;
             const dy = mouseY - p.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
+            const dist = Math.hypot(dx, dy);
 
-            if (dist < 120) {
-                p.x -= (dx / dist) * 0.5;
-                p.y -= (dy / dist) * 0.5;
+            if (dist < 150) {
+                // Laser filament to cursor
+                const alpha = (1 - dist / 150) * 0.6;
+                ctx.strokeStyle = `rgba(0, 240, 255, ${alpha})`;
+                ctx.lineWidth = 0.8;
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(mouseX, mouseY);
+                ctx.stroke();
+
+                // Gentle magnetic drift
+                p.x -= (dx / dist) * 0.6;
+                p.y -= (dy / dist) * 0.6;
             }
 
-            ctx.fillStyle = p.color + p.alpha + ')';
+            // Connect lines between close particles
+            for (let j = i + 1; j < particleCount; j++) {
+                const p2 = particles[j];
+                const pdx = p2.x - p.x;
+                const pdy = p2.y - p.y;
+                const pdist = Math.hypot(pdx, pdy);
+
+                if (pdist < 110) {
+                    const lineAlpha = (1 - pdist / 110) * 0.25;
+                    ctx.strokeStyle = p.colorPrefix + lineAlpha + ')';
+                    ctx.lineWidth = 0.6;
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.stroke();
+                }
+            }
+
+            // Draw Node Dot
+            ctx.fillStyle = p.colorPrefix + p.alpha + ')';
+            ctx.shadowColor = p.colorPrefix + '1)';
+            ctx.shadowBlur = 8;
             ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.arc(p.x, p.y, Math.max(0.5, currentSize), 0, Math.PI * 2);
             ctx.fill();
-        });
+            ctx.shadowBlur = 0;
+        }
 
         requestAnimationFrame(render);
     }
