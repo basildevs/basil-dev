@@ -112,9 +112,9 @@ function initBackgroundCanvas() {
         [80,  160, 255],  // blue
     ];
 
-    // ── Main Particles (Responsive density: 160 mobile, 300 desktop) ──
+    // ── Main Particles (Responsive density: 120 mobile, 240 desktop) ──
     const isMobile = window.innerWidth < 768;
-    const PCOUNT = isMobile ? 160 : 300;
+    const PCOUNT = isMobile ? 120 : 240;
     const particles = Array.from({ length: PCOUNT }, () => {
         const rgb = COLORS[Math.floor(Math.random() * COLORS.length)];
         return {
@@ -141,7 +141,7 @@ function initBackgroundCanvas() {
             color: Math.random() > 0.5 ? '0,240,255' : '157,78,221'
         });
     }
-    setInterval(spawnShootingStar, 900);
+    setInterval(spawnShootingStar, 1400);
 
     // ── Grid offset ──────────────────────────────────────────
     let gridOff = 0;
@@ -335,8 +335,8 @@ function initBackgroundCanvas() {
             for (let j = i + 1; j < PCOUNT; j++) {
                 const q   = particles[j];
                 const qd  = Math.hypot(q.x - p.x, q.y - p.y);
-                if (qd < 120) {
-                    const la = (1 - qd / 120) * 0.22;
+                if (qd < 100) {
+                    const la = (1 - qd / 100) * 0.2;
                     ctx.strokeStyle = `rgba(${p.rgb[0]},${p.rgb[1]},${p.rgb[2]},${la})`;
                     ctx.lineWidth = 0.5;
                     ctx.beginPath();
@@ -367,132 +367,287 @@ function initBackgroundCanvas() {
 }
 
 /* ==========================================
-   2. WEB AUDIO API SYNTHESIZER - SCI-FI UPGRADE
+   2. WEB AUDIO API SYNTHESIZER — FULL REWRITE
+   Fixes: Mobile unlock, distinct SFX per element,
+          Arcade background music, Touch SFX
    ========================================== */
 let sfxEnabled = true;
-let audioCtx = null;
+let audioCtx   = null;
 let audioBooted = false;
+let arcadeMusicNodes = null;
+
+/* ── Unlock / get AudioContext ──────────────── */
+function getAudioCtx() {
+    if (!audioCtx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (AC) audioCtx = new AC();
+    }
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+}
+
+/* ── Single oscillator helper ───────────────── */
+function makeNote(freq, endFreq, dur, vol, type, delayMs) {
+    if (!sfxEnabled) return;
+    const ac = getAudioCtx();
+    if (!ac) return;
+    setTimeout(() => {
+        try {
+            const now = ac.currentTime;
+            const osc  = ac.createOscillator();
+            const gain = ac.createGain();
+            osc.connect(gain);
+            gain.connect(ac.destination);
+            osc.type = type || 'sine';
+            osc.frequency.setValueAtTime(Math.max(1, freq), now);
+            if (endFreq) osc.frequency.exponentialRampToValueAtTime(Math.max(1, endFreq), now + dur);
+            gain.gain.setValueAtTime(vol, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+            osc.start(now);
+            osc.stop(now + dur + 0.02);
+        } catch(e) {}
+    }, delayMs || 0);
+}
+
+/* ── White noise burst helper ───────────────── */
+function makeNoise(dur, vol, lpFreq) {
+    const ac = getAudioCtx();
+    if (!ac) return;
+    try {
+        const now    = ac.currentTime;
+        const frames = ac.sampleRate * dur;
+        const buf    = ac.createBuffer(1, frames, ac.sampleRate);
+        const data   = buf.getChannelData(0);
+        for (let i = 0; i < frames; i++) data[i] = Math.random() * 2 - 1;
+        const src    = ac.createBufferSource();
+        src.buffer   = buf;
+        const filt   = ac.createBiquadFilter();
+        filt.type    = 'lowpass';
+        filt.frequency.setValueAtTime(lpFreq || 800, now);
+        const gain   = ac.createGain();
+        gain.gain.setValueAtTime(vol, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+        src.connect(filt); filt.connect(gain); gain.connect(ac.destination);
+        src.start(now); src.stop(now + dur + 0.02);
+    } catch(e) {}
+}
+
+/* ── Main SFX dispatcher ────────────────────── */
+window.playSFX = function(type) {
+    if (!sfxEnabled) return;
+    switch(type) {
+        /* Nav link click — rising laser ping */
+        case 'nav':
+            makeNote(300, 900, 0.12, 0.05, 'sine');
+            makeNote(600, 1200, 0.08, 0.03, 'triangle', 60);
+            break;
+        /* Generic button click — quick zap */
+        case 'click':
+            makeNote(700, 280, 0.09, 0.06, 'triangle');
+            break;
+        /* Game card hover / reveal */
+        case 'card':
+            makeNote(420, 840, 0.14, 0.04, 'sine');
+            makeNote(840, 1260, 0.1, 0.025, 'sine', 80);
+            break;
+        /* Filter tab — blip */
+        case 'filter':
+            makeNote(900, 700, 0.05, 0.045, 'square');
+            break;
+        /* Hover — subtle tick */
+        case 'hover':
+            makeNote(600, 750, 0.04, 0.01, 'sine');
+            break;
+        /* Form keystroke */
+        case 'keystroke':
+            makeNote(950, 750, 0.025, 0.006, 'triangle');
+            break;
+        /* SFX toggle */
+        case 'toggle':
+            makeNote(440, 880, 0.15, 0.06, 'sine');
+            makeNote(880, 440, 0.15, 0.04, 'sine', 150);
+            break;
+        /* Warp / nav CTA */
+        case 'warp':
+            makeNote(80, 1600, 0.35, 0.08, 'sawtooth');
+            makeNote(160, 800, 0.35, 0.045, 'square', 20);
+            break;
+        /* Power-up */
+        case 'powerup':
+            makeNote(300, 900, 0.2, 0.06, 'sine');
+            makeNote(600, 1200, 0.15, 0.05, 'sine', 180);
+            break;
+        /* Shockwave tap / touch */
+        case 'tap':
+            makeNote(500, 200, 0.08, 0.07, 'triangle');
+            makeNoise(0.05, 0.03, 400);
+            break;
+        /* Explosion noise burst */
+        case 'explosion':
+            makeNoise(0.3, 0.14, 600);
+            makeNote(120, 40, 0.3, 0.07, 'sawtooth', 30);
+            break;
+        /* Boot sequence */
+        case 'boot':
+            [0, 90, 200, 320, 480].forEach((d, i) => {
+                const f = [220, 330, 440, 550, 880][i];
+                makeNote(f, f * 1.5, 0.13, 0.05, 'sine', d);
+            });
+            break;
+        /* Glitch stutter */
+        case 'glitch':
+            [0, 55, 115, 175].forEach(d => {
+                makeNote(Math.random()*400+200, Math.random()*200+80, 0.05, 0.03, 'square', d);
+            });
+            break;
+    }
+};
+
+/* ── Arcade chiptune music ──────────────────── */
+window.startArcadeMusic = function() {
+    if (!sfxEnabled) return;
+    window.stopArcadeMusic();
+    const ac = getAudioCtx();
+    if (!ac) return;
+
+    // Simple looping melody pattern (frequencies in Hz)
+    const melody = [523, 659, 784, 659, 784, 880, 1047, 880,
+                    784, 659, 523, 440, 523, 659, 523, 0];
+    const bass   = [131, 131, 165, 165, 196, 196, 131, 131];
+    const bpm    = 160;
+    const beat   = 60 / bpm;
+
+    const master = ac.createGain();
+    master.gain.setValueAtTime(0.18, ac.currentTime);
+    master.connect(ac.destination);
+
+    const nodes = [master];
+    let loopHandle;
+
+    function scheduleLoop(startTime) {
+        melody.forEach((freq, i) => {
+            if (freq === 0) return;
+            const t = startTime + i * beat * 0.5;
+            const osc  = ac.createOscillator();
+            const g    = ac.createGain();
+            osc.type   = 'square';
+            osc.frequency.setValueAtTime(freq, t);
+            g.gain.setValueAtTime(0.15, t);
+            g.gain.exponentialRampToValueAtTime(0.001, t + beat * 0.45);
+            osc.connect(g); g.connect(master);
+            osc.start(t); osc.stop(t + beat * 0.5);
+            nodes.push(osc, g);
+        });
+
+        bass.forEach((freq, i) => {
+            const t = startTime + i * beat;
+            const osc  = ac.createOscillator();
+            const g    = ac.createGain();
+            osc.type   = 'sawtooth';
+            osc.frequency.setValueAtTime(freq, t);
+            g.gain.setValueAtTime(0.1, t);
+            g.gain.exponentialRampToValueAtTime(0.001, t + beat * 0.9);
+            osc.connect(g); g.connect(master);
+            osc.start(t); osc.stop(t + beat);
+            nodes.push(osc, g);
+        });
+
+        const loopDur = melody.length * beat * 0.5;
+        loopHandle = setTimeout(() => scheduleLoop(startTime + loopDur), (loopDur - 0.1) * 1000);
+        nodes.push({ _timeout: loopHandle });
+    }
+
+    scheduleLoop(ac.currentTime + 0.05);
+    arcadeMusicNodes = { master, nodes, loopHandle: null };
+};
+
+window.stopArcadeMusic = function() {
+    if (!arcadeMusicNodes) return;
+    try {
+        arcadeMusicNodes.master.gain.setValueAtTime(0.0001, (audioCtx||{currentTime:0}).currentTime);
+    } catch(e) {}
+    if (arcadeMusicNodes.loopHandle) clearTimeout(arcadeMusicNodes.loopHandle);
+    arcadeMusicNodes.nodes.forEach(n => { try { if (n._timeout) clearTimeout(n._timeout); else if (n.stop) n.stop(); } catch(e) {} });
+    arcadeMusicNodes = null;
+};
 
 function initAudioEngine() {
     const sfxBtn = document.getElementById('sfx-toggle');
-    
-    function getAudioContext() {
-        if (!audioCtx) {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (AudioContext) {
-                audioCtx = new AudioContext();
-            }
+
+    /* ── Unlock AudioContext on FIRST touch or click ── */
+    const unlockAudio = () => {
+        getAudioCtx(); // creates and resumes
+        if (!audioBooted && sfxEnabled) {
+            audioBooted = true;
+            setTimeout(() => playSFX('boot'), 300);
         }
-        if (audioCtx && audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-        return audioCtx;
-    }
-
-    // Rich Sci-Fi SFX Library
-    window.playSFX = function(type) {
-        if (!sfxEnabled) return;
-        const ctx = getAudioContext();
-        if (!ctx) return;
-
-        try {
-            const now = ctx.currentTime;
-
-            function makeOsc(freq, endFreq, duration, volume, oscType) {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = oscType || 'sine';
-                osc.frequency.setValueAtTime(freq, now);
-                if (endFreq) osc.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
-                gain.gain.setValueAtTime(volume, now);
-                gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-                osc.start(now);
-                osc.stop(now + duration + 0.01);
-            }
-
-            switch (type) {
-                case 'hover':    makeOsc(550, 750, 0.045, 0.012, 'sine'); break;
-                case 'click':    makeOsc(700, 300, 0.07, 0.055, 'triangle'); break;
-                case 'laser':    makeOsc(1100, 180, 0.14, 0.065, 'sawtooth'); break;
-                case 'scan':     makeOsc(400, 1600, 0.3, 0.04, 'sine'); break;
-                case 'warp':
-                    makeOsc(80, 1600, 0.4, 0.09, 'sawtooth');
-                    makeOsc(160, 800, 0.4, 0.05, 'square');
-                    break;
-                case 'powerup':
-                    makeOsc(300, 900, 0.2, 0.06, 'sine');
-                    setTimeout(() => makeOsc(600, 1200, 0.15, 0.05, 'sine'), 180);
-                    break;
-                case 'glitch':
-                    [0, 50, 110, 170].forEach(d => {
-                        setTimeout(() => makeOsc(Math.random()*400+200, Math.random()*200+100, 0.05, 0.035, 'square'), d);
-                    });
-                    break;
-                case 'keystroke': makeOsc(900, 700, 0.028, 0.007, 'triangle'); break;
-                case 'boot':
-                    [0, 80, 180, 300, 460].forEach((delay, i) => {
-                        const freqs = [220, 330, 440, 550, 880];
-                        setTimeout(() => makeOsc(freqs[i], freqs[i]*1.5, 0.12, 0.05, 'sine'), delay);
-                    });
-                    break;
-                case 'alarm':
-                    [0, 200, 400].forEach(d => setTimeout(() => makeOsc(880, 440, 0.15, 0.06, 'square'), d));
-                    break;
-                case 'explosion': {
-                    const bufLen = ctx.sampleRate * 0.3;
-                    const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
-                    const data = buf.getChannelData(0);
-                    for (let i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1);
-                    const src = ctx.createBufferSource();
-                    src.buffer = buf;
-                    const expGain = ctx.createGain();
-                    const expFilter = ctx.createBiquadFilter();
-                    expFilter.type = 'lowpass';
-                    expFilter.frequency.setValueAtTime(600, now);
-                    src.connect(expFilter); expFilter.connect(expGain); expGain.connect(ctx.destination);
-                    expGain.gain.setValueAtTime(0.15, now);
-                    expGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
-                    src.start(now); src.stop(now + 0.35);
-                    break;
-                }
-            }
-        } catch (e) { console.warn('Audio error', e); }
     };
+    window.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
+    window.addEventListener('click',      unlockAudio, { once: true });
 
+    /* ── SFX toggle button ── */
     if (sfxBtn) {
         sfxBtn.addEventListener('click', () => {
             sfxEnabled = !sfxEnabled;
             sfxBtn.querySelector('.btn-text').textContent = sfxEnabled ? 'SFX: ON' : 'SFX: OFF';
             sfxBtn.style.borderColor = sfxEnabled ? 'var(--neon-cyan)' : 'var(--text-muted)';
-            if (sfxEnabled) playSFX('powerup');
+            if (sfxEnabled) playSFX('toggle');
         });
     }
 
-    // Boot jingle on first click
-    const bootOnce = () => {
-        if (!audioBooted && sfxEnabled) { audioBooted = true; setTimeout(() => playSFX('boot'), 200); }
-        window.removeEventListener('click', bootOnce);
-    };
-    window.addEventListener('click', bootOnce);
+    /* ── Per-element distinct SFX ── */
 
-    // SFX on interactive elements
-    document.querySelectorAll('button, a, .filter-btn, .game-card').forEach(el => {
-        el.addEventListener('mouseenter', () => playSFX('hover'));
-        el.addEventListener('click', () => playSFX('click'));
+    // Nav links
+    document.querySelectorAll('.nav-link, .hud-logo').forEach(el => {
+        el.addEventListener('click', () => playSFX('nav'));
     });
 
-    // Keystroke SFX
-    document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('keydown', () => playSFX('keystroke')));
+    // Primary / secondary CTA buttons
+    document.querySelectorAll('.primary-btn, .secondary-btn').forEach(el => {
+        el.addEventListener('mouseenter', () => playSFX('hover'));
+        el.addEventListener('click',      () => playSFX('warp'));
+    });
 
-    // Shockwave ripple on any click
-    document.addEventListener('click', (e) => {
+    // Outline / general buttons
+    document.querySelectorAll('.outline-btn, .hud-btn').forEach(el => {
+        el.addEventListener('mouseenter', () => playSFX('hover'));
+        el.addEventListener('click',      () => playSFX('click'));
+    });
+
+    // Game cards
+    document.querySelectorAll('.game-card').forEach(el => {
+        el.addEventListener('mouseenter', () => playSFX('card'));
+        el.addEventListener('click',      () => playSFX('powerup'));
+    });
+
+    // Filter tabs
+    document.querySelectorAll('.filter-btn').forEach(el => {
+        el.addEventListener('click', () => playSFX('filter'));
+    });
+
+    // Form keystrokes
+    document.querySelectorAll('input, textarea, select').forEach(el => {
+        el.addEventListener('keydown', () => playSFX('keystroke'));
+        el.addEventListener('focus',   () => playSFX('scan'));
+    });
+
+    // Touch SFX — fires for finger taps on mobile (touchstart not consumed by other handlers)
+    window.addEventListener('touchstart', () => {
+        if (sfxEnabled) playSFX('tap');
+    }, { passive: true });
+
+    /* ── Click shockwave ripple visual ── */
+    const addRipple = (x, y) => {
         const ripple = document.createElement('div');
-        ripple.style.cssText = `position:fixed;left:${e.clientX}px;top:${e.clientY}px;width:0;height:0;border:2px solid rgba(0,240,255,0.9);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:9997;animation:rippleOut 0.55s ease-out forwards;`;
+        ripple.style.cssText = `position:fixed;left:${x}px;top:${y}px;width:0;height:0;border:2px solid rgba(0,240,255,0.9);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:9997;animation:rippleOut 0.55s ease-out forwards;`;
         document.body.appendChild(ripple);
         setTimeout(() => ripple.remove(), 600);
-    });
+    };
+    document.addEventListener('click', e => addRipple(e.clientX, e.clientY));
+    document.addEventListener('touchstart', e => {
+        if (e.touches?.[0]) addRipple(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+
     if (!document.getElementById('ripple-style')) {
         const s = document.createElement('style');
         s.id = 'ripple-style';

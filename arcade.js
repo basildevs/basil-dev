@@ -126,7 +126,8 @@ document.addEventListener('DOMContentLoaded', () => {
         lives = 3;
         updateHUD('ACTIVE', 'var(--neon-green)');
 
-        if (window.playSFX) window.playSFX('click');
+        if (window.playSFX) window.playSFX('powerup');
+        if (window.startArcadeMusic) window.startArcadeMusic();
 
         if (currentGameIndex === 0) initSpaceDefender();
         else if (currentGameIndex === 1) initGravityFlip();
@@ -138,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function stopGame() {
         gameActive = false;
         if (gameLoopId) cancelAnimationFrame(gameLoopId);
+        if (window.stopArcadeMusic) window.stopArcadeMusic();
     }
 
     function updateHUD(status, color) {
