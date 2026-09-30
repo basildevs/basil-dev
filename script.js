@@ -733,6 +733,7 @@ function initGameShowcase() {
    ========================================== */
 function initPlayableArcadeModal() {
     const modal = document.getElementById('game-modal');
+    if (!modal) return;
     const closeBtn = document.getElementById('close-modal-btn');
     const triggers = document.querySelectorAll('.play-trigger-btn');
     
