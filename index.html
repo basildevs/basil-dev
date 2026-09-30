@@ -42,7 +42,8 @@
                 <a href="#hero" class="nav-link active"><i data-lucide="user"></i> PROFILE</a>
                 <a href="#about" class="nav-link"><i data-lucide="info"></i> ABOUT</a>
                 <a href="#arcades" class="nav-link"><i data-lucide="gamepad-2"></i> ITCH.IO GAMES</a>
-                <a href="#tech-tree" class="nav-link"><i data-lucide="cpu"></i> SKILLS</a>
+                <a href="#game-logic" class="nav-link"><i data-lucide="cpu"></i> GAME ARCHITECTURE</a>
+                <a href="#tech-tree" class="nav-link"><i data-lucide="layers"></i> SKILLS</a>
                 <a href="arcade.html" class="nav-link highlight-nav"><i data-lucide="sparkles"></i> FUN ARCADE ROOM</a>
                 <a href="#terminal" class="nav-link"><i data-lucide="terminal"></i> CONTACT</a>
             </nav>
@@ -491,64 +492,194 @@
             </div>
         </section>
 
-        <!-- Section 4: Game DevLogs & Technical Insights -->
-        <section id="devlog" class="section-padding">
+        <!-- Section 4: Game Architecture & Core Implemented Systems -->
+        <section id="game-logic" class="section-padding">
             <div class="cyber-container">
                 <div class="section-header">
-                    <div class="section-tag">// TECHNICAL_DEVLOG.LOG</div>
-                    <h2 class="section-title">GAME DEVLOGS & CODE BREAKDOWNS</h2>
-                    <p class="section-desc">Deep dives into Unity rendering pipelines, entity optimization, and custom game mechanics.</p>
+                    <div class="section-tag">// ARCHITECTURE_&_FEATURES.ENGINE</div>
+                    <h2 class="section-title">CORE GAME LOGIC & IMPLEMENTED SYSTEMS</h2>
+                    <p class="section-desc">Technical breakdown of the real-time networking, physics pipelines, procedural algorithms, and game state architectures implemented across my shipped titles.</p>
                 </div>
 
                 <div class="devlog-grid">
-                    <!-- DevLog Card 1 -->
+                    <!-- Feature Card 1: Fun Target (WebSocket Multiplayer) -->
                     <article class="devlog-card glass-panel">
-                        <div class="devlog-meta">
-                            <span class="devlog-date"><i data-lucide="calendar"></i> JULY 2026</span>
-                            <span class="devlog-read"><i data-lucide="clock"></i> 6 MIN READ</span>
-                        </div>
-                        <h3 class="devlog-title">Rendering 10,000 Dynamic Asteroids at 60 FPS in Unity WebGL</h3>
+                        <div class="system-tag-badge">REAL-TIME MULTIPLAYER &amp; PROBABILITY ARCHITECTURE</div>
+                        <h3 class="devlog-title">Fun Target: Real-Time WebSocket Multiplayer &amp; Physics Wheel</h3>
                         <p class="devlog-snippet">
-                            How we leveraged Unity's Data-Oriented Technology Stack (DOTS), C# Job System, and Burst Compiler to render massive space battles in browser WebGL builds without garbage collector spikes.
+                            Engineered an interactive casino-arcade game communicating with a live remote game server via custom WebSocket networking. Implemented full client-server event synchronization, betting cycles, and physics-driven target wheel mechanics.
                         </p>
 
+                        <ul class="features-list">
+                            <li>
+                                <i data-lucide="radio"></i>
+                                <div><strong>Real-Time WebSocket Gateway:</strong> Integrated <code>WebSocketEditor.cs</code> connecting to the remote game server (<code>wss://demo.dream36.club/GATEWAY/GAME02/ws</code>) for synchronized game ticks, live bet streaming, and server-authoritative win validation.</div>
+                            </li>
+                            <li>
+                                <i data-lucide="compass"></i>
+                                <div><strong>Physics-Driven Rotating Wheel:</strong> Programmed realistic angular torque deceleration and randomized stop angles in <code>Wheel.cs</code> with collision triggers detecting exact winning slice targets.</div>
+                            </li>
+                            <li>
+                                <i data-lucide="timer"></i>
+                                <div><strong>Round State Machine:</strong> Designed synchronized timer cycles in <code>TimerController.cs</code> (Betting Open &rarr; Input Lock &rarr; Wheel Spin &rarr; Result Resolution &rarr; Payout Evaluation).</div>
+                            </li>
+                            <li>
+                                <i data-lucide="coins"></i>
+                                <div><strong>Balance &amp; Multiplier Engine:</strong> Built dynamic chip allocation, balance validation, multi-target bet placement, and dynamic 10x/50x bonus multiplier payouts in <code>BalanceController.cs</code> and <code>BetPlacement.cs</code>.</div>
+                            </li>
+                        </ul>
+
                         <div class="code-preview">
-                            <pre><code>// Jobified Asteroid Movement System
-[BurstCompile]
-public partial struct AsteroidMovementJob : IJobEntity {
-    public float DeltaTime;
-    public void Execute(ref LocalTransform transform, in Velocity velocity) {
-        transform.Position += velocity.Value * DeltaTime;
+                            <div class="code-preview-header">
+                                <span>WebSocketEditor.cs // Real-Time Event Sync</span>
+                                <span>C# / WebSocket</span>
+                            </div>
+                            <pre><code>// Synchronized WebSocket Round Result Listener
+void HandleServerMessage(string jsonResponse) {
+    var gameEvent = JsonUtility.FromJson&lt;GameEventData&gt;(jsonResponse);
+    if (gameEvent.type == "SPIN_START") {
+        wheelController.StartSpin(gameEvent.targetAngle, gameEvent.duration);
+    } else if (gameEvent.type == "ROUND_PAYOUT") {
+        balanceController.CreditWinnings(gameEvent.winAmount, gameEvent.multiplier);
+        resultUI.ShowRoundSummary(gameEvent.winningNumber);
     }
 }</code></pre>
                         </div>
-
-                        <button class="read-more-btn" onclick="alert('Full DevLog article loaded!')">
-                            <span>READ DEVLOG ARTICLE</span> <i data-lucide="arrow-right"></i>
-                        </button>
                     </article>
 
-                    <!-- DevLog Card 2 -->
+                    <!-- Feature Card 2: Endless Runner 3D -->
                     <article class="devlog-card glass-panel">
-                        <div class="devlog-meta">
-                            <span class="devlog-date"><i data-lucide="calendar"></i> JUNE 2026</span>
-                            <span class="devlog-read"><i data-lucide="clock"></i> 4 MIN READ</span>
-                        </div>
-                        <h3 class="devlog-title">Writing a Custom Holographic Cyberpunk Shader in Shader Graph</h3>
+                        <div class="system-tag-badge">PROCEDURAL GENERATION &amp; GAME STATE ENGINE</div>
+                        <h3 class="devlog-title">Endless Runner 3D: Procedural Chunk Pooling &amp; Runtime UI</h3>
                         <p class="devlog-snippet">
-                            Step-by-step breakdown of building a scanline holographic material effect with fresnel glowing edges, UV scrolling distortion, and distance-based alpha fading.
+                            Built an infinite 3D runner with real-time procedural chunk instantiation and recycling, multi-lane steering with Unity's New Input System, obstacle collision penalties, and an auto-injected runtime UI system.
                         </p>
 
-                        <div class="code-preview">
-                            <pre><code>// HLSL Fresnel & Scanline Math Snippet
-float fresnel = pow(1.0 - saturate(dot(normalWS, viewDirWS)), _FresnelPower);
-float scanline = sin(positionWS.y * _ScanFrequency + _Time.y * _Speed);
-float3 finalColor = _HoloColor.rgb * (fresnel + scanline * 0.25);</code></pre>
-                        </div>
+                        <ul class="features-list">
+                            <li>
+                                <i data-lucide="layers"></i>
+                                <div><strong>Dynamic Procedural Level Generator:</strong> Implemented chunk pooling in <code>LevelGenerator.cs</code> with forward translation, checkpoint interval pacing, obstacle density balancing, and dynamic chunk recycling.</div>
+                            </li>
+                            <li>
+                                <i data-lucide="gamepad-2"></i>
+                                <div><strong>Multi-Lane Input &amp; Clamping:</strong> Configured Unity's New Input System (<code>PlayerControls.cs</code>) with responsive lateral movement, clamped lane bounds, and hit-reaction animations.</div>
+                            </li>
+                            <li>
+                                <i data-lucide="layout"></i>
+                                <div><strong>Self-Contained Runtime UI Engine:</strong> Engineered <code>RunnerUIManager.cs</code> to dynamically construct Start Screen, In-Game HUD, Pause Menu, and Game Over modals with custom synthesized audio clicks.</div>
+                            </li>
+                            <li>
+                                <i data-lucide="zap"></i>
+                                <div><strong>Time-Survival Loop &amp; High Score:</strong> Built countdown timer system with +5s Apple pickups, coin scoring, dynamic speed scaling, and persistent high score tracking via <code>PlayerPrefs</code>.</div>
+                            </li>
+                        </ul>
 
-                        <button class="read-more-btn" onclick="alert('Full DevLog article loaded!')">
-                            <span>READ DEVLOG ARTICLE</span> <i data-lucide="arrow-right"></i>
-                        </button>
+                        <div class="code-preview">
+                            <div class="code-preview-header">
+                                <span>LevelGenerator.cs // Procedural Chunk Recycling</span>
+                                <span>C# / Unity URP</span>
+                            </div>
+                            <pre><code>// Chunk Movement &amp; Procedural Respawn Loop
+void MoveChunks() {
+    for (int i = 0; i &lt; chunks.Count; i++) {
+        chunks[i].transform.Translate(-transform.forward * moveSpeed * Time.deltaTime);
+        if (chunks[i].transform.position.z &lt;= Camera.main.transform.position.z - chunkLength) {
+            Destroy(chunks[i]);
+            chunks.RemoveAt(i);
+            SpawnChunk(); // Spawns next random or checkpoint chunk
+            i--;
+        }
+    }
+}</code></pre>
+                        </div>
+                    </article>
+
+                    <!-- Feature Card 3: Lone Space Rider -->
+                    <article class="devlog-card glass-panel">
+                        <div class="system-tag-badge">3D FLIGHT PHYSICS &amp; WORLD EXPLORATION</div>
+                        <h3 class="devlog-title">Lone Space Rider: 6-DOF Jet Propulsion &amp; Multi-World System</h3>
+                        <p class="devlog-snippet">
+                            Created a 3D sci-fi exploration game following an astronaut navigating space environments from the Moon back to Earth, featuring momentum-based flight dynamics and multi-scene atmospheric world building.
+                        </p>
+
+                        <ul class="features-list">
+                            <li>
+                                <i data-lucide="rocket"></i>
+                                <div><strong>6-DOF Astronaut Jet Flight:</strong> Scripted 3D thruster mechanics with linear inertia, angular torque control, momentum dampening, and zero-gravity drift physics.</div>
+                            </li>
+                            <li>
+                                <i data-lucide="globe"></i>
+                                <div><strong>Multi-Environment World System:</strong> Built 5 interconnected exploration scenes: Lunar Base, Loop Street Cyber City, Deep Space Flight, Space Station Docking, and Earth Re-entry.</div>
+                            </li>
+                            <li>
+                                <i data-lucide="key"></i>
+                                <div><strong>Mission Triggers &amp; Docking Sequences:</strong> Designed objective check trigger systems, access-key collection mechanics, and automated docking bay lock-on sequences.</div>
+                            </li>
+                            <li>
+                                <i data-lucide="volume-2"></i>
+                                <div><strong>Spatial Audio &amp; Cinematic Lighting:</strong> Integrated layered environmental soundscapes, low-gravity audio spatialization, and volumetric star dust particle systems.</div>
+                            </li>
+                        </ul>
+
+                        <div class="code-preview">
+                            <div class="code-preview-header">
+                                <span>AstronautFlight.cs // 3D Thrust &amp; Momentum Dynamics</span>
+                                <span>C# / 3D Rigidbody</span>
+                            </div>
+                            <pre><code>// 6-DOF Jet Thruster Physics
+void FixedUpdate() {
+    Vector3 thrustDirection = transform.forward * input.thrustVertical + transform.right * input.thrustHorizontal;
+    rb.AddForce(thrustDirection * jetThrustForce, ForceMode.Acceleration);
+    
+    // Apply zero-gravity angular dampening
+    rb.AddTorque(transform.up * input.yaw * rotationTorque, ForceMode.Acceleration);
+    rb.linearVelocity = Vector3.ClampMagnitude(rb.linearVelocity, maxSpaceSpeed);
+}</code></pre>
+                        </div>
+                    </article>
+
+                    <!-- Feature Card 4: GravityFlip -->
+                    <article class="devlog-card glass-panel">
+                        <div class="system-tag-badge">2D VECTOR PHYSICS &amp; REACTION MECHANICS</div>
+                        <h3 class="devlog-title">GravityFlip: Dynamic Gravity Inversion &amp; Precision Hazard Pipeline</h3>
+                        <p class="devlog-snippet">
+                            Engineered a high-reaction 2D arcade platformer built around instantaneous gravity vector flipping, requiring sub-frame precision to navigate lethal obstacle gauntlets and rotating hazards.
+                        </p>
+
+                        <ul class="features-list">
+                            <li>
+                                <i data-lucide="repeat"></i>
+                                <div><strong>Real-Time Gravity Inversion Pipeline:</strong> Manipulated Unity's 2D physics matrix (<code>Physics2D.gravity</code>) dynamically on single-frame triggers, reversing rigid-body force vectors instantaneously.</div>
+                            </li>
+                            <li>
+                                <i data-lucide="zap"></i>
+                                <div><strong>Zero-Latency Response:</strong> Input polling engineered for immediate frame-accurate execution, neutralizing opposing vertical velocities on flip for razor-sharp handling.</div>
+                            </li>
+                            <li>
+                                <i data-lucide="shield-alert"></i>
+                                <div><strong>Lethal Hazard Trigger Network:</strong> Built high-speed collision triggers detecting spike contacts and dynamic rotating obstacles with instant respawn reset loops.</div>
+                            </li>
+                            <li>
+                                <i data-lucide="trending-up"></i>
+                                <div><strong>Progressive Velocity Curve:</strong> Implemented speed ramping algorithms that scale obstacle frequency and running speed dynamically the longer the player survives.</div>
+                            </li>
+                        </ul>
+
+                        <div class="code-preview">
+                            <div class="code-preview-header">
+                                <span>GravityController.cs // Dynamic Vector Inversion</span>
+                                <span>C# / 2D Physics</span>
+                            </div>
+                            <pre><code>// Instant Gravity Inversion Pipeline
+void InvertGravity() {
+    isGravityFlipped = !isGravityFlipped;
+    Physics2D.gravity = new Vector2(0, isGravityFlipped ? 9.81f : -9.81f);
+    
+    // Cancel downward velocity for instant tactile response
+    rb2d.linearVelocity = new Vector2(rb2d.linearVelocity.x, 0f);
+    transform.localScale = new Vector3(1f, isGravityFlipped ? -1f : 1f, 1f);
+}</code></pre>
+                        </div>
                     </article>
                 </div>
             </div>
